@@ -696,6 +696,11 @@ class Sidebar(BaseTile):
                 header['content_type'] = content_type
 
         elif grouping == 'first_letter':
+            # BBB: I suspect this is a potential performance issue
+            headers = [
+                header for header in headers
+                if self.get_group_children_by_first_letter(header['title'])
+            ]
             # Show all items by first letter stored in the grouping storage
             for header in headers:
                 header['title'] = header['title'].upper()
@@ -757,11 +762,12 @@ class Sidebar(BaseTile):
         groupings = gs.get_groupings()
         return groupings.get(self.grouping(), {})
 
-    def uids_in_grouping(self):
+    def uids_in_grouping(self, value=None):
         ''' Get the values in grouping
         '''
         grouping = self.get_grouping_by_name()
-        value = self.request.get('groupname')
+        if value is None:
+            value = self.request.get('groupname')
         return [x for x in grouping.get(value, [])]
 
     def get_group_children_by_label(self):
@@ -859,12 +865,12 @@ class Sidebar(BaseTile):
             if brain.portal_type != 'ploneintranet.workspace.workspacefolder'
         ]
 
-    def get_group_children_by_first_letter(self):
+    def get_group_children_by_first_letter(self, letter=None):
         """
         Return all the items that have a value $grouping_value for a
         field corresponding to "first_letter".
         """
-        uids = self.uids_in_grouping()
+        uids = self.uids_in_grouping(letter)
         return self.get_group_brains({'UID': uids})
 
     def get_group_children(self):
