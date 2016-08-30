@@ -78,7 +78,8 @@ setup(name='ploneintranet',
           'htmllaundry',
           'slc.mailrouter',
           'slc.outdated',
-          'quaive.resources.ploneintranet'
+          'quaive.resources.ploneintranet',
+          'Products.PloneHotfix20160830',
       ],
       extras_require={
           'test': [
